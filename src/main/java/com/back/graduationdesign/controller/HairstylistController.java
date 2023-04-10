@@ -36,6 +36,7 @@ public class HairstylistController {
     @GetMapping("/list")
     public R getAll(){
         List<Hairstylist> list = hairstylistService.list();
+        //利用stream流遍历
         List<HairstylistDto> hairstylistDtoList = list.stream().map(item->{
             HairstylistDto hairstylistDto = new HairstylistDto();
             BeanUtils.copyProperties(item,hairstylistDto,"skill");
@@ -50,6 +51,25 @@ public class HairstylistController {
         return R.success(hairstylistDtoList);
     }
 
+    /**
+     * 根据发型推荐发型师
+     * @param hairstyle
+     * @return
+     */
+    @GetMapping("/recommend")
+    public R getRecommend(String hairstyle){
+        List<Hairstylist> hairstylist = hairstylistService.list();
+        List<Hairstylist> list = new ArrayList<>();
+        for (Hairstylist item : hairstylist) {
+            String[] split = item.getSkill().split(",");
+            for (String s : split) {
+                if (s.equals(hairstyle)){
+                    list.add(item);
+                }
+            }
+        }
+        return R.success(list);
+    }
 
 }
 

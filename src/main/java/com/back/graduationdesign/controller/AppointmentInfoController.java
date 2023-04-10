@@ -10,6 +10,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 /**
  * <p>
  *  前端控制器
@@ -32,6 +34,16 @@ public class AppointmentInfoController {
         wrapper.eq(AppointmentInfo::getUsername,username);
         Page<AppointmentInfo> infoPage = appointmentInfoService.page(new Page<AppointmentInfo>(page, size), wrapper);
         return R.success(infoPage);
+    }
+
+    @PostMapping("/list")
+    public R getAll(@RequestBody Map<String,String> map){
+        String date1 = map.get("date1");
+        String date2 = map.get("date2");
+        String stylist = map.get("stylist");
+        LambdaQueryWrapper<AppointmentInfo> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(AppointmentInfo::getHairstylist,stylist);
+        return null;
     }
 
 }
