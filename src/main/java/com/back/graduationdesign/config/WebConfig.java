@@ -31,10 +31,9 @@ public class WebConfig extends WebMvcConfigurationSupport {
          * addResourceHandler：访问映射路径
          * addResourceLocations：资源绝对路径
          */
-        String filePath = "F:\\graduation-design\\img";
-        String filePath1 = "F:\\graduation-design";
+        String filePath = "E:\\graduation-design\\img";
         registry.addResourceHandler("/picture/**")
-                .addResourceLocations("file:"+ filePath +"/").addResourceLocations("file"+ filePath1 +"/");
+                .addResourceLocations("file:"+ filePath +"/");
     }
 
     /**
