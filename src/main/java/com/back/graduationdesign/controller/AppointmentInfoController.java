@@ -1,6 +1,9 @@
 package com.back.graduationdesign.controller;
 
 
+import cn.hutool.json.JSONArray;
+import cn.hutool.json.JSONUtil;
+import com.back.graduationdesign.dto.Result;
 import com.back.graduationdesign.entity.AppointmentInfo;
 import com.back.graduationdesign.mapper.AppointmentInfoMapper;
 import com.back.graduationdesign.service.AppointmentInfoService;
@@ -10,6 +13,12 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -37,13 +46,9 @@ public class AppointmentInfoController {
     }
 
     @PostMapping("/list")
-    public R getAll(@RequestBody Map<String,String> map){
-        String date1 = map.get("date1");
-        String date2 = map.get("date2");
-        String stylist = map.get("stylist");
-        LambdaQueryWrapper<AppointmentInfo> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(AppointmentInfo::getHairstylist,stylist);
-        return null;
+    public R getAll(@RequestBody Map<String,Object> map) throws ParseException {
+        List<AppointmentInfo> list = appointmentInfoService.makeAnAppointment(map);
+        return R.success(new Result(list.size(),list));
     }
 
 }
