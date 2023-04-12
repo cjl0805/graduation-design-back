@@ -18,4 +18,10 @@ import java.util.Map;
  */
 public interface AppointmentInfoService extends IService<AppointmentInfo> {
     List<AppointmentInfo> makeAnAppointment(Map<String,Object> map) throws ParseException;
+
+    String dateHandler(String date) throws ParseException;
+
+    int dateCompare(Map<String,Object> map) throws ParseException;
+
+    String generateAppointmentId(Map<String,Object> map) throws ParseException;
 }

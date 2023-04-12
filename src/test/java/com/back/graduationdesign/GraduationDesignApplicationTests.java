@@ -16,6 +16,7 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.UUID;
 
 @SpringBootTest
 class GraduationDesignApplicationTests {
@@ -108,6 +109,12 @@ class GraduationDesignApplicationTests {
         calendar.add(Calendar.DATE,-7);
         String startDate = format.format(calendar.getTime());
         System.out.println("startDate = " + startDate);
+    }
+
+    @Test
+    public void UUIDTest(){
+        String string = UUID.randomUUID().toString();
+        System.out.println("string = " + string);
     }
 
 }
