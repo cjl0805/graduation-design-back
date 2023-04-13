@@ -50,6 +50,19 @@ public class AppointmentInfoController {
     }
 
     /**
+     * 查询该用户的预约信息
+     * @param username
+     * @return
+     */
+    @GetMapping("get/byUsername")
+    public R getByUsername(String username){
+        LambdaQueryWrapper<AppointmentInfo> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(AppointmentInfo::getUsername,username);
+        List<AppointmentInfo> list = appointmentInfoService.list(queryWrapper);
+        return R.success(list);
+    }
+
+    /**
      * 查看预约信息
      * @param map
      * @return

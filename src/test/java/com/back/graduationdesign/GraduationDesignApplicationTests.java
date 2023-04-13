@@ -31,7 +31,7 @@ class GraduationDesignApplicationTests {
         // 2、全局配置
         GlobalConfig gc = new GlobalConfig();
         String projectPath = System.getProperty("user.dir");
-        gc.setOutputDir("E:\\IDEA workplace\\graduation-design-back" + "/src/main/java");
+        gc.setOutputDir("E:\\IDEA workspace\\graduation-design-back" + "/src/main/java");
 
         gc.setAuthor("cjl");
         gc.setOpen(false); //生成后是否打开资源管理器
