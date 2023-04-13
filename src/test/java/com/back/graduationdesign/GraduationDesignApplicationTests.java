@@ -1,5 +1,6 @@
 package com.back.graduationdesign;
 
+import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.generator.AutoGenerator;
@@ -46,7 +47,7 @@ class GraduationDesignApplicationTests {
 
         // 3、数据源配置
         DataSourceConfig dsc = new DataSourceConfig();
-        dsc.setUrl("jdbc:mysql://localhost:3306/graduation-design?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=Asia/Shanghai");
+        dsc.setUrl("jdbc:mysql://localhost:3306/graduation-design?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true");
         dsc.setDriverName("com.mysql.cj.jdbc.Driver");
         dsc.setUsername("root");
         dsc.setPassword("cjl0805");
@@ -70,7 +71,7 @@ class GraduationDesignApplicationTests {
         // 5、策略配置
         StrategyConfig strategy = new StrategyConfig();
 
-        strategy.setInclude("message_info");
+        strategy.setInclude("discount");
 
         strategy.setNaming(NamingStrategy.underline_to_camel);//数据库表映射到实体的命名策略
         strategy.setTablePrefix(pc.getModuleName() + "_"); //生成实体时去掉表前缀
@@ -113,8 +114,8 @@ class GraduationDesignApplicationTests {
 
     @Test
     public void UUIDTest(){
-        String string = UUID.randomUUID().toString();
-        System.out.println("string = " + string);
+        String now = DateUtil.now();
+        System.out.println("now = " + now);
     }
 
 }

@@ -44,7 +44,7 @@ public class AppointmentInfoController {
     @GetMapping("/get/{page}/{size}")
     public R getAppointmentInfo(String username, @PathVariable int page,@PathVariable int size){
         LambdaQueryWrapper<AppointmentInfo> wrapper =new LambdaQueryWrapper<>();
-        wrapper.eq(AppointmentInfo::getUsername,username);
+        wrapper.eq(AppointmentInfo::getUsername,username).orderByDesc(AppointmentInfo::getDate).orderByDesc(AppointmentInfo::getTime);
         Page<AppointmentInfo> infoPage = appointmentInfoService.page(new Page<AppointmentInfo>(page, size), wrapper);
         return R.success(infoPage);
     }
@@ -73,25 +73,55 @@ public class AppointmentInfoController {
      */
     @PostMapping("/save")
     public R save(@RequestBody Map<String,Object> map) throws ParseException {
+
+        String time = map.get("time").toString();
+        String username = map.get("username").toString();
+        String hairstyle = map.get("hairstyle").toString();
+        String stylist = map.get("stylist").toString();
+
         AppointmentInfo appointmentInfo = new AppointmentInfo();
         String appointmentId = appointmentInfoService.generateAppointmentId(map);
         String date = appointmentInfoService.dateHandler(map.get("date").toString()).substring(0, 10);
 
         //首先判断用户是否已经预约该时间段
+        LambdaQueryWrapper<AppointmentInfo> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(AppointmentInfo::getUsername,username)
+                .eq(AppointmentInfo::getDate,date)
+                .eq(AppointmentInfo::getTime,time);
+        AppointmentInfo one = appointmentInfoService.getOne(queryWrapper);
+        if (one!=null){
+            return R.error("您已预约过该时段，不可重复预约！");
+        }
 
         //保存预约信息到数据库
         appointmentInfo.setAppointmentId(appointmentId);
         appointmentInfo.setDate(DateUtil.parse(date));
         appointmentInfo.setDateNow(DateUtil.date());
-        appointmentInfo.setHairstyle(map.get("hairstyle").toString());
-        appointmentInfo.setHairstylist(map.get("stylist").toString());
-        appointmentInfo.setUsername(map.get("username").toString());
-        appointmentInfo.setTime(DateUtil.parse(map.get("time").toString()));
+        appointmentInfo.setHairstyle(hairstyle);
+        appointmentInfo.setHairstylist(stylist);
+        appointmentInfo.setUsername(username);
+        appointmentInfo.setTime(DateUtil.parse(time));
         appointmentInfo.setStatus("未支付");
 
         boolean save = appointmentInfoService.save(appointmentInfo);
-        if (save) return R.success(true);
+        if (save) return R.success(appointmentId);
         return R.error("预约失败！");
+    }
+
+    /**
+     * 修改预约状态
+     * @param appointmentId
+     * @return
+     */
+    @PutMapping("/update/status")
+    public R updateStatus(String appointmentId){
+        AppointmentInfo appointmentInfo = new AppointmentInfo();
+        appointmentInfo.setStatus("已成功结算");
+        LambdaQueryWrapper<AppointmentInfo> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(AppointmentInfo::getAppointmentId,appointmentId);
+        boolean update = appointmentInfoService.update(appointmentInfo, queryWrapper);
+        if (update) return R.success(true);
+        else return R.error("支付失败");
     }
 
 }

@@ -95,11 +95,9 @@ public class AppointmentInfoServiceImpl extends ServiceImpl<AppointmentInfoMappe
     @Override
     public String generateAppointmentId(Map<String, Object> map) throws ParseException {
         String appointmentId ="OHAS-"+map.get("username")+"-";
-        String date = dateHandler(map.get("date").toString()).substring(0,10);
-        String[] split = date.split("-");
-        for (String s : split) {
-            appointmentId+=s;
-        }
+        String now = DateUtil.now();
+        String replace = now.replace("-", "").replace(" ", "").replace(":", "");
+        appointmentId+=replace;
         return appointmentId;
     }
 
