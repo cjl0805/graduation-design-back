@@ -137,5 +137,26 @@ public class AppointmentInfoController {
         else return R.error("支付失败");
     }
 
+    /**
+     * 取消预约
+     * @param appointmentInfo
+     * @return
+     */
+    @DeleteMapping("/delete")
+    public R delete(@RequestBody AppointmentInfo appointmentInfo){
+        //判断预约时间是否小于当前时间，若小于则不可取消
+        SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat format2 = new SimpleDateFormat("HH:mm:ss");
+        String datetime = format1.format(appointmentInfo.getDate()) + " " + format2.format(appointmentInfo.getTime());
+        System.out.println("datetime = " + datetime);
+        String now = DateUtil.now();
+        if(datetime.compareTo(now)<0){
+            return R.error("改预约已过取消时间，不可取消！");
+        }
+        boolean remove = appointmentInfoService.removeById(appointmentInfo.getId());
+        if (remove) return R.success(true);
+        else return R.error("取消失败！");
+    }
+
 }
 

@@ -33,6 +33,12 @@ public class UserController {
     @Autowired
     private CustomInfoService customInfoService;
 
+    /**
+     * 注册
+     * @param username
+     * @param password
+     * @return
+     */
     @PostMapping("/register")
     public R register(String username,String password){
         LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
@@ -55,6 +61,12 @@ public class UserController {
         return R.success(null);
     }
 
+    /**
+     * 登录
+     * @param username
+     * @param password
+     * @return
+     */
     @GetMapping("/login")
     public R login(String username,String password){
         LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
@@ -77,6 +89,12 @@ public class UserController {
 //        else return R.success("退出成功");
 //    }
 
+    /**
+     * 修改密码
+     * @param password
+     * @param username
+     * @return
+     */
     @PutMapping("update/password")
     public R updatePassword(String password,String username){
         LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
@@ -92,6 +110,18 @@ public class UserController {
         return R.success(update+" "+update1);
     }
 
+    /**
+     * 查询用户权限
+     * @param username
+     * @return
+     */
+    @GetMapping("/get/role")
+    public R getRole(String username){
+        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(User::getUsername,username);
+        String role = userService.getOne(queryWrapper).getRole();
+        return R.success(role);
+    }
 
 
 }
