@@ -43,5 +43,9 @@ public class Hairstylist implements Serializable {
      */
     private String description;
 
+    /**
+     * 用户名
+     */
+    private String username;
 
 }

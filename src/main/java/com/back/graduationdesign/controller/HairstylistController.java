@@ -1,17 +1,16 @@
 package com.back.graduationdesign.controller;
 
 
+import com.back.graduationdesign.dto.HairStylistInfo;
 import com.back.graduationdesign.dto.HairstylistDto;
+import com.back.graduationdesign.entity.CustomInfo;
 import com.back.graduationdesign.entity.Hairstylist;
 import com.back.graduationdesign.service.HairstylistService;
 import com.back.graduationdesign.utils.R;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,6 +51,24 @@ public class HairstylistController {
     }
 
     /**
+     * 查询发型师的擅长发型
+     * @param username
+     * @return
+     */
+    @GetMapping("/get/hairstyle")
+    public R getHairstyle(String username){
+        LambdaQueryWrapper<Hairstylist> queryWrapper =new LambdaQueryWrapper<>();
+        queryWrapper.eq(Hairstylist::getUsername,username);
+        Hairstylist one = hairstylistService.getOne(queryWrapper);
+        String[] split = one.getSkill().split(",");
+        List<String> list = new ArrayList<>();
+        for (String s : split) {
+            list.add(s);
+        }
+        return R.success(list);
+    }
+
+    /**
      * 根据发型推荐发型师
      * @param hairstyle
      * @return
@@ -71,5 +88,38 @@ public class HairstylistController {
         return R.success(list);
     }
 
+    /**
+     * 根据用户名查询发型师信息
+     * @param username
+     * @return
+     */
+    @GetMapping("/get")
+    public R getByUsername(String username){
+        HairStylistInfo hairStylistInfo = hairstylistService.selectHairStylistInfo(username);
+        return R.success(hairStylistInfo);
+    }
+
+    /**
+     * 保存头像
+     * @param img
+     * @param username
+     * @return
+     */
+    @PostMapping("/save/img")
+    public R saveImg(String img,String username){
+        Hairstylist hairstylist = new Hairstylist();
+        hairstylist.setImg(img);
+        LambdaQueryWrapper<Hairstylist> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Hairstylist::getUsername,username);
+        boolean update = hairstylistService.update(hairstylist, wrapper);
+        return R.success(update);
+    }
+
+
+    @PutMapping("/update/info")
+    public R updateInfo(@RequestBody Hairstylist hairstylist){
+        boolean b = hairstylistService.updateById(hairstylist);
+        return R.success(b);
+    }
 }
 

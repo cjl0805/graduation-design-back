@@ -63,6 +63,21 @@ public class AppointmentInfoController {
     }
 
     /**
+     * 查询发型师的预约信息
+     * @param hairstylist
+     * @return
+     */
+    @GetMapping("get/byHairstylist/{page}/{size}")
+    public R getByHairstylist(String hairstylist,@PathVariable int page,@PathVariable int size){
+        LambdaQueryWrapper<AppointmentInfo> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(AppointmentInfo::getHairstylist,hairstylist)
+                .orderByDesc(AppointmentInfo::getDate)
+                .orderByDesc(AppointmentInfo::getTime);
+        Page<AppointmentInfo> infoPage = appointmentInfoService.page(new Page<AppointmentInfo>(page, size), queryWrapper);
+        return R.success(infoPage);
+    }
+
+    /**
      * 查看预约信息
      * @param map
      * @return
@@ -127,14 +142,14 @@ public class AppointmentInfoController {
      * @return
      */
     @PutMapping("/update/status")
-    public R updateStatus(String appointmentId){
+    public R updateStatus(String appointmentId,String status){
         AppointmentInfo appointmentInfo = new AppointmentInfo();
-        appointmentInfo.setStatus("已成功结算");
+        appointmentInfo.setStatus(status);
         LambdaQueryWrapper<AppointmentInfo> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(AppointmentInfo::getAppointmentId,appointmentId);
         boolean update = appointmentInfoService.update(appointmentInfo, queryWrapper);
         if (update) return R.success(true);
-        else return R.error("支付失败");
+        else return R.error("状态更改失败");
     }
 
     /**

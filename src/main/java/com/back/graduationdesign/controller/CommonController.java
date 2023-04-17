@@ -16,12 +16,15 @@ public class CommonController {
     public R upload(@RequestPart MultipartFile file) throws Exception {
         //获取原始文件名
         String originalFilename = file.getOriginalFilename();
-        String url = "F:\\graduation-design\\img\\";
+        String url = "E:\\graduation-design\\img\\";
         File dir = new File(url);
         if (!dir.exists()){
             dir.mkdir();
         }
-        file.transferTo(new File(url+originalFilename));
+        File file1 = new File(url + originalFilename);
+        if (!file1.exists()){
+            file.transferTo(file1);
+        }
         return R.success("http://localhost:8090/picture/"+originalFilename);
     }
 }
