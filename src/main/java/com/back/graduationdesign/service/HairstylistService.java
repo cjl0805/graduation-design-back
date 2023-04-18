@@ -17,4 +17,5 @@ import java.util.List;
 public interface HairstylistService extends IService<Hairstylist> {
     HairStylistInfo selectHairStylistInfo(String username);
     List<HairStylistInfo> selectHairStylistInfoByPage(int page, int size, String query);
+    long selectHairStylistInfoPageCount(String query);
 }

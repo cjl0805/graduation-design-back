@@ -24,7 +24,10 @@ public interface HairstylistMapper extends BaseMapper<Hairstylist> {
     @Select("SELECT hairstylist.*,user.password,user.role FROM hairstylist,user WHERE hairstylist.username=user.username AND hairstylist.username=#{username}")
     HairStylistInfo selectHairStylistInfo(String username);
 
-    @Select("SELECT hairstylist.*,user.password,user.role FROM hairstylist,user WHERE hairstylist.username=user.username and (hairstylist.id like '%${query}%' or name like '%${query}%') limit #{page},#{size}")
+    @Select("SELECT hairstylist.*,user.password,user.role FROM hairstylist left join user on hairstylist.username=user.username where (hairstylist.id like '%${query}%' or name like '%${query}%') limit #{page},#{size}")
     List<HairStylistInfo> selectHairStylistInfoByPage(int page, int size, String query);
+
+    @Select("SELECT count(*) FROM hairstylist left join user on hairstylist.username=user.username where (hairstylist.id like '%${query}%' or name like '%${query}%')")
+    long selectHairStylistInfoPageCount(String query);
 
 }

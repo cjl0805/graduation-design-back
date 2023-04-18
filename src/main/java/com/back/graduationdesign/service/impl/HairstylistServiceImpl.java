@@ -34,5 +34,10 @@ public class HairstylistServiceImpl extends ServiceImpl<HairstylistMapper, Hairs
         return hairstylistMapper.selectHairStylistInfoByPage(page, size, query);
     }
 
+    @Override
+    public long selectHairStylistInfoPageCount(String query) {
+        return hairstylistMapper.selectHairStylistInfoPageCount(query);
+    }
+
 
 }

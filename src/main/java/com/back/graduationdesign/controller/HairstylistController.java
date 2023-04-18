@@ -6,7 +6,9 @@ import com.back.graduationdesign.dto.HairstylistDto;
 import com.back.graduationdesign.entity.CustomInfo;
 import com.back.graduationdesign.entity.Hairstyle;
 import com.back.graduationdesign.entity.Hairstylist;
+import com.back.graduationdesign.entity.User;
 import com.back.graduationdesign.service.HairstylistService;
+import com.back.graduationdesign.service.UserService;
 import com.back.graduationdesign.utils.R;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -33,6 +35,8 @@ public class HairstylistController {
 
     @Autowired
     private HairstylistService hairstylistService;
+    @Autowired
+    private UserService userService;
 
     @GetMapping("/list")
     public R getAll(){
@@ -62,12 +66,12 @@ public class HairstylistController {
     @GetMapping("/get/page/{page}/{size}")
     public R getPage(@RequestParam String query,@PathVariable int page,@PathVariable int size){
         List<HairStylistInfo> hairStylistInfo = hairstylistService.selectHairStylistInfoByPage((page-1)*size, size, query);
-        List<HairStylistInfo> list = hairstylistService.selectHairStylistInfoByPage(1, 10000, query);
+        long total = hairstylistService.selectHairStylistInfoPageCount(query);
         Page<HairStylistInfo> hairStylistInfoPage = new Page<>();
         hairStylistInfoPage.setCurrent(page);
         hairStylistInfoPage.setRecords(hairStylistInfo);
         hairStylistInfoPage.setSize(size);
-        hairStylistInfoPage.setTotal(list.size());
+        hairStylistInfoPage.setTotal(total);
         return R.success(hairStylistInfoPage);
     }
 
@@ -136,7 +140,70 @@ public class HairstylistController {
         return R.success(update);
     }
 
+    /**
+     * 增加
+     * @param hairStylistInfo
+     * @return
+     */
+    @PostMapping("save")
+    public R save(@RequestBody HairStylistInfo hairStylistInfo){
+        LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(User::getUsername,hairStylistInfo.getUsername());
+        List<User> list = userService.list(wrapper);
+        if (!list.isEmpty()){
+            return R.error("该用户名已存在！");
+        }
+        Hairstylist hairstylist = new Hairstylist();
+        BeanUtils.copyProperties(hairStylistInfo,hairstylist);
+        boolean save = hairstylistService.save(hairstylist);
+        User user = new User();
+        BeanUtils.copyProperties(hairStylistInfo,user);
+        user.setRole("2");
+        userService.save(user);
+        if (save) return R.success(true);
+        else return R.error("添加失败！");
+    }
 
+    /**
+     * 删除
+     * @param hairStylistInfo
+     * @return
+     */
+    @DeleteMapping("/delete")
+    public R delete(@RequestBody HairStylistInfo hairStylistInfo){
+        boolean b = hairstylistService.removeById(hairStylistInfo.getId());
+
+        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(User::getUsername,hairStylistInfo.getUsername());
+        boolean remove = userService.remove(queryWrapper);
+        if (b) return R.success(true);
+        else return R.error("删除失败！");
+    }
+
+    /**
+     * 修改
+     * @param hairStylistInfo
+     * @return
+     */
+    @PutMapping("/update")
+    public R update(@RequestBody HairStylistInfo hairStylistInfo){
+        User user = new User();
+        BeanUtils.copyProperties(hairStylistInfo,user);
+        LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(User::getUsername,hairStylistInfo.getUsername());
+        userService.update(user,wrapper);
+        Hairstylist hairstylist = new Hairstylist();
+        BeanUtils.copyProperties(hairStylistInfo,hairstylist);
+        boolean b = hairstylistService.updateById(hairstylist);
+        if (b) return R.success(true);
+        else return R.error("修改失败！");
+    }
+
+    /**
+     * 修改
+     * @param hairstylist
+     * @return
+     */
     @PutMapping("/update/info")
     public R updateInfo(@RequestBody Hairstylist hairstylist){
         boolean b = hairstylistService.updateById(hairstylist);
