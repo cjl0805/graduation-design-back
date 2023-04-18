@@ -8,13 +8,11 @@ import com.back.graduationdesign.service.HairstyleService;
 import com.back.graduationdesign.service.HairstylistService;
 import com.back.graduationdesign.utils.R;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import org.apache.ibatis.annotations.Delete;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.lang.invoke.LambdaConversionException;
 import java.util.ArrayList;
@@ -48,6 +46,20 @@ public class HairstyleController {
             return null;
         }
         return R.success(list);
+    }
+
+    /**
+     * 分页显示
+     * @param page
+     * @param size
+     * @return
+     */
+    @GetMapping("/get/{page}/{size}")
+    public R getPage(@RequestParam String query,@PathVariable int page,@PathVariable int size){
+        LambdaQueryWrapper<Hairstyle> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.like(Hairstyle::getId,query).or().like(Hairstyle::getHairstyle,query);
+        Page<Hairstyle> hairstylePage = hairstyleService.page(new Page<>(page, size),queryWrapper);
+        return R.success(hairstylePage);
     }
 
     /**
@@ -107,6 +119,68 @@ public class HairstyleController {
             return hairStyleChecked;
         }).collect(Collectors.toList());
         return R.success(list);
+    }
+
+    /**
+     * 增加
+     * @param hairstyle
+     * @return
+     */
+    @PostMapping("/save")
+    public R save(@RequestBody Hairstyle hairstyle){
+        boolean save = hairstyleService.save(hairstyle);
+        if (save) return R.success(true);
+        else return R.error("添加失败！");
+    }
+
+    /**
+     * 删除
+     * @param hairstyle
+     * @return
+     */
+    @DeleteMapping("/delete")
+    public R delete(@RequestBody Hairstyle hairstyle){
+
+        //同时删除发型师的发型信息
+        LambdaQueryWrapper<Hairstylist> queryWrapper = new LambdaQueryWrapper<>();
+        //模糊查询出包含当前发型的发型师信息
+        queryWrapper.like(Hairstylist::getSkill,hairstyle.getHairstyle());
+        List<Hairstylist> list = hairstylistService.list(queryWrapper);
+        if (!list.isEmpty()){
+            //利用stream流处理发型师信息，将带有当前发型的信息删除
+            List<Hairstylist> hairstylists = list.stream().map(item->{
+                Hairstylist hairstylist = new Hairstylist();
+                BeanUtils.copyProperties(item,hairstylist,"skill");
+                String skill ="";
+                String[] split = item.getSkill().split(",");
+                for (int i=0;i<split.length-1;i++) {
+                    if (!split[i].equals(hairstyle.getHairstyle())){
+                        skill+=split[i]+",";
+                    }
+                }
+                StringBuilder s = new StringBuilder(skill);
+                //替换最后一个,为空
+                String value = String.valueOf(s.replace(skill.length() - 1, skill.length(), ""));
+                hairstylist.setSkill(value);
+                return hairstylist;
+            }).collect(Collectors.toList());
+            boolean b1 = hairstylistService.updateBatchById(hairstylists);
+        }
+        boolean b = hairstyleService.removeById(hairstyle.getId());
+        if (b) return R.success(true);
+        else return R.error("删除失败！");
+    }
+
+    /**
+     * 修改
+     * @param hairstyle
+     * @return
+     */
+    @PutMapping("/update")
+    public R update(@RequestBody Hairstyle hairstyle){
+        boolean b = hairstyleService.updateById(hairstyle);
+        if (b) return R.success(true);
+        else return R.error("修改失败！");
     }
 }
 

@@ -8,6 +8,8 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * <p>
  * 发型师 服务实现类
@@ -26,4 +28,11 @@ public class HairstylistServiceImpl extends ServiceImpl<HairstylistMapper, Hairs
     public HairStylistInfo selectHairStylistInfo(String username) {
         return hairstylistMapper.selectHairStylistInfo(username);
     }
+
+    @Override
+    public List<HairStylistInfo> selectHairStylistInfoByPage(int page, int size, String query) {
+        return hairstylistMapper.selectHairStylistInfoByPage(page, size, query);
+    }
+
+
 }

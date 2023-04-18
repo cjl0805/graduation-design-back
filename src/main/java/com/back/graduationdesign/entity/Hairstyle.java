@@ -23,7 +23,7 @@ public class Hairstyle implements Serializable {
     /**
      * 主键
      */
-    @TableId(value = "id", type = IdType.ID_WORKER_STR)
+    @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
     /**

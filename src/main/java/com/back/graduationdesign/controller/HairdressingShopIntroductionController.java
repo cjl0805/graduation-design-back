@@ -5,11 +5,7 @@ import com.back.graduationdesign.entity.HairdressingShopIntroduction;
 import com.back.graduationdesign.service.HairdressingShopIntroductionService;
 import com.back.graduationdesign.utils.R;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -32,6 +28,13 @@ public class HairdressingShopIntroductionController {
     @GetMapping("/get")
     public R get(){
         return R.success(shopIntroductionService.list());
+    }
+
+    @PutMapping("/update")
+    public R update(@RequestBody HairdressingShopIntroduction shopIntroduction){
+        boolean b = shopIntroductionService.updateById(shopIntroduction);
+        if (b) return R.success(true);
+        else return R.error("修改失败！");
     }
 }
 

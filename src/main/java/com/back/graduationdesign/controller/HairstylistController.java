@@ -4,10 +4,12 @@ package com.back.graduationdesign.controller;
 import com.back.graduationdesign.dto.HairStylistInfo;
 import com.back.graduationdesign.dto.HairstylistDto;
 import com.back.graduationdesign.entity.CustomInfo;
+import com.back.graduationdesign.entity.Hairstyle;
 import com.back.graduationdesign.entity.Hairstylist;
 import com.back.graduationdesign.service.HairstylistService;
 import com.back.graduationdesign.utils.R;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -48,6 +50,25 @@ public class HairstylistController {
             return hairstylistDto;
         }).collect(Collectors.toList());
         return R.success(hairstylistDtoList);
+    }
+
+    /**
+     * 分页查询
+     * @param query
+     * @param page
+     * @param size
+     * @return
+     */
+    @GetMapping("/get/page/{page}/{size}")
+    public R getPage(@RequestParam String query,@PathVariable int page,@PathVariable int size){
+        List<HairStylistInfo> hairStylistInfo = hairstylistService.selectHairStylistInfoByPage((page-1)*size, size, query);
+        List<HairStylistInfo> list = hairstylistService.selectHairStylistInfoByPage(1, 10000, query);
+        Page<HairStylistInfo> hairStylistInfoPage = new Page<>();
+        hairStylistInfoPage.setCurrent(page);
+        hairStylistInfoPage.setRecords(hairStylistInfo);
+        hairStylistInfoPage.setSize(size);
+        hairStylistInfoPage.setTotal(list.size());
+        return R.success(hairStylistInfoPage);
     }
 
     /**
