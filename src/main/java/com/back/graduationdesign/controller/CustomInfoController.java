@@ -2,10 +2,13 @@ package com.back.graduationdesign.controller;
 
 
 import com.back.graduationdesign.entity.CustomInfo;
+import com.back.graduationdesign.entity.User;
 import com.back.graduationdesign.service.CustomInfoService;
+import com.back.graduationdesign.service.UserService;
 import com.back.graduationdesign.utils.R;
 import com.back.graduationdesign.utils.RegexUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +30,9 @@ public class CustomInfoController {
     @Autowired
     private CustomInfoService customInfoService;
 
+    @Autowired
+    private UserService userService;
+
     /**
      * 获取顾客信息
      * @param username
@@ -38,6 +44,35 @@ public class CustomInfoController {
         wrapper.eq(CustomInfo::getUsername,username);
         CustomInfo customInfo = customInfoService.getOne(wrapper);
         return R.success(customInfo);
+    }
+
+    /**
+     * 分页显示
+     * @param page
+     * @param size
+     * @return
+     */
+    @GetMapping("/get/{page}/{size}")
+    public R getPage(String query,@PathVariable int page,@PathVariable int size){
+        LambdaQueryWrapper<CustomInfo> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.like(CustomInfo::getId,query).or().like(CustomInfo::getName,query).or().like(CustomInfo::getUsername,query);
+        Page<CustomInfo> customInfoPage = customInfoService.page(new Page<>(page, size),queryWrapper);
+        return R.success(customInfoPage);
+    }
+
+    /**
+     * 删除
+     * @param customInfo
+     * @return
+     */
+    @DeleteMapping("/delete")
+    public R delete(@RequestBody CustomInfo customInfo){
+        boolean b = customInfoService.removeById(customInfo.getId());
+        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(User::getUsername,customInfo.getUsername());
+        userService.remove(queryWrapper);
+        if (b) return R.success(true);
+        else return R.error("删除失败");
     }
 
     /**

@@ -7,6 +7,7 @@ import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONUtil;
 import com.back.graduationdesign.dto.Result;
 import com.back.graduationdesign.entity.AppointmentInfo;
+import com.back.graduationdesign.entity.MessageInfo;
 import com.back.graduationdesign.mapper.AppointmentInfoMapper;
 import com.back.graduationdesign.service.AppointmentInfoService;
 import com.back.graduationdesign.utils.R;
@@ -48,6 +49,27 @@ public class AppointmentInfoController {
         Page<AppointmentInfo> infoPage = appointmentInfoService.page(new Page<AppointmentInfo>(page, size), wrapper);
         return R.success(infoPage);
     }
+
+    /**
+     * 分页显示
+     * @param query
+     * @param page
+     * @param size
+     * @return
+     */
+    @GetMapping("get/page/{page}/{size}")
+    public R getPage(String query, @PathVariable int page,@PathVariable int size){
+        LambdaQueryWrapper<AppointmentInfo> wrapper =new LambdaQueryWrapper<>();
+        wrapper.eq(AppointmentInfo::getUsername,query)
+                .or().like(AppointmentInfo::getId,query)
+                .or().like(AppointmentInfo::getHairstylist,query)
+                .or().like(AppointmentInfo::getHairstyle,query)
+                .orderByDesc(AppointmentInfo::getDate)
+                .orderByDesc(AppointmentInfo::getTime);
+        Page<AppointmentInfo> infoPage = appointmentInfoService.page(new Page<AppointmentInfo>(page, size), wrapper);
+        return R.success(infoPage);
+    }
+
 
     /**
      * 查询该用户的预约信息
@@ -169,7 +191,9 @@ public class AppointmentInfoController {
             return R.error("改预约已过取消时间，不可取消！");
         }
         boolean remove = appointmentInfoService.removeById(appointmentInfo.getId());
-        if (remove) return R.success(true);
+        if (remove) {
+            return R.success(true);
+        }
         else return R.error("取消失败！");
     }
 
