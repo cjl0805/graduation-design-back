@@ -153,15 +153,20 @@ public class HairstyleController {
                 BeanUtils.copyProperties(item,hairstylist,"skill");
                 String skill ="";
                 String[] split = item.getSkill().split(",");
-                for (int i=0;i<split.length-1;i++) {
-                    if (!split[i].equals(hairstyle.getHairstyle())){
-                        skill+=split[i]+",";
+                if(split.length==1){
+                    String value="";
+                    hairstylist.setSkill(value);
+                }else {
+                    for (int i=0;i<split.length-1;i++) {
+                        if (!split[i].equals(hairstyle.getHairstyle())){
+                            skill+=split[i]+",";
+                        }
                     }
+                    StringBuilder s = new StringBuilder(skill);
+                    //替换最后一个,为空
+                    String value = String.valueOf(s.replace(skill.length() - 1, skill.length(), ""));
+                    hairstylist.setSkill(value);
                 }
-                StringBuilder s = new StringBuilder(skill);
-                //替换最后一个,为空
-                String value = String.valueOf(s.replace(skill.length() - 1, skill.length(), ""));
-                hairstylist.setSkill(value);
                 return hairstylist;
             }).collect(Collectors.toList());
             boolean b1 = hairstylistService.updateBatchById(hairstylists);
