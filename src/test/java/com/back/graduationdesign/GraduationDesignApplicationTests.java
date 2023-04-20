@@ -1,5 +1,6 @@
 package com.back.graduationdesign;
 
+import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.annotation.IdType;
@@ -71,7 +72,7 @@ class GraduationDesignApplicationTests {
         // 5、策略配置
         StrategyConfig strategy = new StrategyConfig();
 
-        strategy.setInclude("discount");
+        strategy.setInclude("notice");
 
         strategy.setNaming(NamingStrategy.underline_to_camel);//数据库表映射到实体的命名策略
         strategy.setTablePrefix(pc.getModuleName() + "_"); //生成实体时去掉表前缀
@@ -116,6 +117,28 @@ class GraduationDesignApplicationTests {
     public void UUIDTest(){
         String now = DateUtil.now();
         System.out.println("now = " + now);
+    }
+
+    @Test
+    public void StringTest(){
+        String s = "OHAS-cjl-20230418103424";
+        String x = "OHAS-aka145-20230418103424";
+        s.lastIndexOf("-");
+        x.lastIndexOf("-");
+        String s1 = s.substring(5, s.lastIndexOf("-"));
+        System.out.println("s1 = " + s1);
+        String x1 = x.substring(5, x.lastIndexOf("-"));
+        System.out.println("x1 = " + x1);
+    }
+
+    @Test
+    public void DateUtilTest(){
+        DateTime date = DateUtil.date();
+        System.out.println("date = " + date);
+        String substring1 = date.toString().substring(0, 10);
+        System.out.println("substring1 = " + substring1);
+        String substring2 = date.toString().substring(11, 19);
+        System.out.println("substring2 = " + substring2);
     }
 
 }

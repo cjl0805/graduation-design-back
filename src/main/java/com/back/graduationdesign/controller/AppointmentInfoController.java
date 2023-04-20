@@ -8,8 +8,10 @@ import cn.hutool.json.JSONUtil;
 import com.back.graduationdesign.dto.Result;
 import com.back.graduationdesign.entity.AppointmentInfo;
 import com.back.graduationdesign.entity.MessageInfo;
+import com.back.graduationdesign.entity.Notice;
 import com.back.graduationdesign.mapper.AppointmentInfoMapper;
 import com.back.graduationdesign.service.AppointmentInfoService;
+import com.back.graduationdesign.service.NoticeService;
 import com.back.graduationdesign.utils.R;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -41,6 +43,10 @@ public class AppointmentInfoController {
 
     @Autowired
     private AppointmentInfoService appointmentInfoService;
+
+    @Autowired
+    private NoticeService noticeService;
+
 
     @GetMapping("/get/{page}/{size}")
     public R getAppointmentInfo(String username, @PathVariable int page,@PathVariable int size){
@@ -153,6 +159,14 @@ public class AppointmentInfoController {
         appointmentInfo.setTime(DateUtil.parse(time));
         appointmentInfo.setStatus("未支付");
 
+        //保存通知信息到数据库
+        Notice notice = new Notice();
+        notice.setAuthor("在线美发预约系统");
+        notice.setUser(username);
+        notice.setDatetime(DateUtil.date());
+        notice.setContent("您有一笔未支付的预约订单，预约单号为 "+appointmentId+" ，可前往 个人中心-我的预约 中去支付");
+        noticeService.save(notice);
+
         boolean save = appointmentInfoService.save(appointmentInfo);
         if (save) return R.success(appointmentId);
         return R.error("预约失败！");
@@ -170,7 +184,14 @@ public class AppointmentInfoController {
         LambdaQueryWrapper<AppointmentInfo> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(AppointmentInfo::getAppointmentId,appointmentId);
         boolean update = appointmentInfoService.update(appointmentInfo, queryWrapper);
-        if (update) return R.success(true);
+        if (update) {
+            Notice notice = new Notice();
+            notice.setDatetime(DateUtil.date());
+            notice.setContent("预约单号为 "+appointmentId+" 的订单状态修改为"+status);
+            notice.setUser(appointmentId.substring(5,appointmentId.lastIndexOf("-")));
+            noticeService.save(notice);
+            return R.success(true);
+        }
         else return R.error("状态更改失败");
     }
 
@@ -192,6 +213,11 @@ public class AppointmentInfoController {
         }
         boolean remove = appointmentInfoService.removeById(appointmentInfo.getId());
         if (remove) {
+            Notice notice = new Notice();
+            notice.setDatetime(DateUtil.date());
+            notice.setContent("预约单号为 "+appointmentInfo.getAppointmentId()+" 的订单被取消");
+            notice.setUser(appointmentInfo.getUsername());
+            noticeService.save(notice);
             return R.success(true);
         }
         else return R.error("取消失败！");

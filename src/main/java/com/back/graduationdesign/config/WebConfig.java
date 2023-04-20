@@ -11,6 +11,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupp
 public class WebConfig extends WebMvcConfigurationSupport {
 
     private final String[] urls =new String[]{
+            "/**/messageInfo/get/page/**",
             "/**/login",
             "/**/upload",
             "/**/register",
