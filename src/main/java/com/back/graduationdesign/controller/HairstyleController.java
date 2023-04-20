@@ -157,7 +157,8 @@ public class HairstyleController {
                     String value="";
                     hairstylist.setSkill(value);
                 }else {
-                    for (int i=0;i<split.length-1;i++) {
+                    //遍历发型师的技能，将不是当前要删除的技能拼接
+                    for (int i = 0;i < split.length;i++) {
                         if (!split[i].equals(hairstyle.getHairstyle())){
                             skill+=split[i]+",";
                         }
