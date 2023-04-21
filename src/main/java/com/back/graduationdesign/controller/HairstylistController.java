@@ -85,7 +85,7 @@ public class HairstylistController {
         LambdaQueryWrapper<Hairstylist> queryWrapper =new LambdaQueryWrapper<>();
         queryWrapper.eq(Hairstylist::getUsername,username);
         Hairstylist one = hairstylistService.getOne(queryWrapper);
-        if(one.getSkill()==null){
+        if(one==null){
             return R.success(null);
         }
         String[] split = one.getSkill().split(",");
