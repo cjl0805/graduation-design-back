@@ -34,7 +34,7 @@ public class ScheduledTask {
         List<AppointmentInfo> list = appointmentInfoService.list(queryWrapper);
         if (list!=null){
             for (AppointmentInfo info : list) {
-                if (!info.getStatus().equals("已接受")){
+                if (!info.getStatus().equals("已接受") && !info.getStatus().equals("已拒绝")){
                     info.setStatus("已拒绝");
                     appointmentInfoService.updateById(info);
                     Notice notice = new Notice();

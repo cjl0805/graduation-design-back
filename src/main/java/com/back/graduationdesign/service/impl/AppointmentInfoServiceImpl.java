@@ -3,8 +3,10 @@ package com.back.graduationdesign.service.impl;
 import cn.hutool.core.date.DateField;
 import cn.hutool.core.date.DateUtil;
 import com.back.graduationdesign.entity.AppointmentInfo;
+import com.back.graduationdesign.entity.Hairstylist;
 import com.back.graduationdesign.mapper.AppointmentInfoMapper;
 import com.back.graduationdesign.service.AppointmentInfoService;
+import com.back.graduationdesign.service.HairstylistService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -14,10 +16,7 @@ import org.springframework.stereotype.Service;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 /**
  * <p>
@@ -100,6 +99,7 @@ public class AppointmentInfoServiceImpl extends ServiceImpl<AppointmentInfoMappe
         appointmentId+=replace;
         return appointmentId;
     }
+
 
     /**
      * 获取某个时间前后几分钟的时间

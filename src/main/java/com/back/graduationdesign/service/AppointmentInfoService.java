@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.text.ParseException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -24,4 +25,5 @@ public interface AppointmentInfoService extends IService<AppointmentInfo> {
     int dateCompare(Map<String,Object> map) throws ParseException;
 
     String generateAppointmentId(Map<String,Object> map) throws ParseException;
+
 }

@@ -32,7 +32,7 @@ class GraduationDesignApplicationTests {
         // 2、全局配置
         GlobalConfig gc = new GlobalConfig();
         String projectPath = System.getProperty("user.dir");
-        gc.setOutputDir("E:\\IDEA workspace\\graduation-design-back" + "/src/main/java");
+        gc.setOutputDir("E:\\IDEA workplace\\graduation-design-back" + "/src/main/java");
 
         gc.setAuthor("cjl");
         gc.setOpen(false); //生成后是否打开资源管理器
@@ -72,7 +72,7 @@ class GraduationDesignApplicationTests {
         // 5、策略配置
         StrategyConfig strategy = new StrategyConfig();
 
-        strategy.setInclude("notice");
+        strategy.setInclude("performance");
 
         strategy.setNaming(NamingStrategy.underline_to_camel);//数据库表映射到实体的命名策略
         strategy.setTablePrefix(pc.getModuleName() + "_"); //生成实体时去掉表前缀
