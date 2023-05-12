@@ -1,16 +1,29 @@
 package com.back.graduationdesign.controller;
 
 import com.back.graduationdesign.utils.R;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Resource;
 import java.io.File;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantLock;
 
 @CrossOrigin
 @RestController
 @RequestMapping("/graduation/design/common")
 public class CommonController {
+
+    @Resource
+    private RabbitTemplate rabbitTemplate;
 
     @PostMapping("/upload")
     public R upload(@RequestPart MultipartFile file) throws Exception {
@@ -27,4 +40,24 @@ public class CommonController {
         }
         return R.success("http://localhost:8090/picture/"+originalFilename);
     }
+
+    /**
+     * 消息队列
+     * @param value
+     * @return
+     */
+    @GetMapping("/rabbitMq")
+    public R send(String value){
+        String messageId = String.valueOf(UUID.randomUUID());
+        String messageData = "message: " + value;
+        String createTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        Map<String, Object> map = new HashMap<>();
+        map.put("messageId", messageId);
+        map.put("messageData", messageData);
+        map.put("createTime", createTime);
+        rabbitTemplate.convertAndSend("test",map);
+        return R.success(value);
+    }
+
+
 }

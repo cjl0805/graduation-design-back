@@ -2,6 +2,9 @@ package com.back.graduationdesign;
 
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
+import com.back.graduationdesign.service.impl.MyTask;
+import com.back.graduationdesign.utils.Consumer;
+import com.back.graduationdesign.utils.TaskQueue;
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.generator.AutoGenerator;
@@ -12,13 +15,12 @@ import com.baomidou.mybatisplus.generator.config.StrategyConfig;
 import com.baomidou.mybatisplus.generator.config.rules.DateType;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.UUID;
+import java.util.*;
 
 @SpringBootTest
 class GraduationDesignApplicationTests {
@@ -139,6 +141,25 @@ class GraduationDesignApplicationTests {
         System.out.println("substring1 = " + substring1);
         String substring2 = date.toString().substring(11, 19);
         System.out.println("substring2 = " + substring2);
+    }
+
+    @Test
+    public void taskTest(){
+        TaskQueue taskQueue = new TaskQueue(5);
+        for (int i=0;i<10;i++){
+            int add = taskQueue.add(new MyTask());
+            System.out.println("add = " + add);
+        }
+        taskQueue.start();
+    }
+
+    @Test
+    public void queueTest(){
+        Queue<Map<String,Object>> queue = new LinkedList<>();
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("id",1);
+        hashMap.put("name","name");
+        queue.offer(hashMap);
     }
 
 }
