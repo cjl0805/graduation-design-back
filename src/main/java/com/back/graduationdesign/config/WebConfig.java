@@ -19,7 +19,9 @@ public class WebConfig extends WebMvcConfigurationSupport {
             "/**/hairstyle/list",
             "/**/hairstylist/list",
             "/**/**.jpg",
+            "/**/**.xlsx",
             "/**/rabbitMq",
+            "/graduation/design/common/file",
             "/**/api/someEndpoint",
     };
 
