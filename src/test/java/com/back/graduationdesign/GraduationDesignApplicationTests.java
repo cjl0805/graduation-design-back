@@ -3,7 +3,6 @@ package com.back.graduationdesign;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import com.back.graduationdesign.service.impl.MyTask;
-import com.back.graduationdesign.utils.Consumer;
 import com.back.graduationdesign.utils.TaskQueue;
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.annotation.IdType;
@@ -18,6 +17,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+
+import java.io.*;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -160,6 +161,37 @@ class GraduationDesignApplicationTests {
         hashMap.put("id",1);
         hashMap.put("name","name");
         queue.offer(hashMap);
+    }
+    @Test
+    public void treeSetTest(){
+        // 创建一个包含Map.Entry对象的TreeSet集合
+        Set<Map.Entry<String, Integer>> set = new TreeSet<>(Map.Entry.comparingByValue());
+
+        // 向set集合中添加元素
+        Map<String, Integer> map = new HashMap<>();
+        map.put("A", 3);
+        map.put("B", 5);
+        map.put("C", 2);
+        map.put("D", 7);
+        set.addAll(map.entrySet());
+
+        // 遍历输出set集合中的元素
+        for (Map.Entry<String, Integer> entry : set) {
+            System.out.println(entry.getKey() + ": " + entry.getValue());
+        }
+    }
+    @Test
+    public void readExcelTest() throws IOException {
+        String fileName = "C:\\Users\\ABC\\Desktop\\yyhome\\上传\\生物项目\\生物项目(1).xlsx";
+        try {
+            FileInputStream fileInputStream = new FileInputStream(fileName);
+            //字节流转为字符流
+            InputStreamReader reader = new InputStreamReader(fileInputStream);
+            BufferedReader bufferedReader = new BufferedReader(reader);
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
 }
