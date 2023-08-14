@@ -23,7 +23,8 @@ public class WebConfig extends WebMvcConfigurationSupport {
             "/**/rabbitMq",
             "/graduation/design/common/file",
             "/**/api/someEndpoint",
-            "/targetPrediction"
+            "/targetPrediction",
+            "/webClient"
     };
 
     /**
